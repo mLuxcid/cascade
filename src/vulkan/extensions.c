@@ -5,6 +5,8 @@
 #include <string.h>
 #include "extensions.h"
 
+extern int enable_validation_layers;
+
 ExtensionList get_instance_extensions(void) {
     ExtensionList list = {
         .count = 0,
@@ -14,6 +16,10 @@ ExtensionList get_instance_extensions(void) {
     uint32_t available_extension_count = 0;
     vkEnumerateInstanceExtensionProperties(NULL, &available_extension_count,
                                            NULL);
+
+    if (enable_validation_layers) {
+        list.names[list.count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+    }
 
     VkExtensionProperties available_extensions[available_extension_count];
     vkEnumerateInstanceExtensionProperties(NULL, &available_extension_count,
