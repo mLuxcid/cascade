@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <vulkan/vulkan.h>
 
@@ -9,7 +10,7 @@
 
 int enable_validation_layers = 1;
 
-void instance_create(VkInstance instance) {
+void instance_create(VkInstance *instance) {
     VkApplicationInfo app_info = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName = "cascade",
@@ -53,8 +54,10 @@ void instance_create(VkInstance instance) {
         instance_create_info.pNext = NULL;
     }
 
-    assert(vkCreateInstance(&instance_create_info, NULL, &instance) ==
-           VK_SUCCESS);
+    if (vkCreateInstance(&instance_create_info, NULL, instance) != VK_SUCCESS) {
+        printf("instance creation failed!\n");
+        exit(1);
+    }
 }
 
 void instance_destroy(VkInstance instance) {

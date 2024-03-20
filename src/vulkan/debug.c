@@ -2,7 +2,7 @@
 #include <vulkan/vulkan_core.h>
 #include "debug.h"
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
+VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
     VkDebugUtilsMessageTypeFlagsEXT message_type,
     const VkDebugUtilsMessengerCallbackDataEXT *p_callback_data,
@@ -19,29 +19,29 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
 }
 
 VkResult debug_utils_messenger_create(
-    VkInstance instance,
+    VkInstance *instance,
     const VkDebugUtilsMessengerCreateInfoEXT *p_create_info,
     const VkAllocationCallbacks *p_allocator,
     VkDebugUtilsMessengerEXT *p_debug_messenger) {
     PFN_vkCreateDebugUtilsMessengerEXT func =
         (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-            instance, "vkCreateDebugUtilsMessengerEXT");
+            *instance, "vkCreateDebugUtilsMessengerEXT");
 
     if (func != NULL) {
-        return func(instance, p_create_info, p_allocator, p_debug_messenger);
+        return func(*instance, p_create_info, p_allocator, p_debug_messenger);
     } else {
         return VK_ERROR_EXTENSION_NOT_PRESENT;
     }
 }
 
-void debug_utils_messenger_destroy(VkInstance instance,
+void debug_utils_messenger_destroy(VkInstance *instance,
                                    VkDebugUtilsMessengerEXT debug_messenger,
                                    const VkAllocationCallbacks *p_allocator) {
     PFN_vkDestroyDebugUtilsMessengerEXT func =
         (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-            instance, "vkDestroyDebugUtilsMessengerEXT");
+            *instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != NULL) {
-        func(instance, debug_messenger, p_allocator);
+        func(*instance, debug_messenger, p_allocator);
     }
 }
 

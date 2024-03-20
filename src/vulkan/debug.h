@@ -3,12 +3,12 @@
 #include <vulkan/vulkan.h>
 
 VkResult debug_utils_messenger_create(
-    VkInstance instance,
+    VkInstance *instance,
     const VkDebugUtilsMessengerCreateInfoEXT *p_create_info,
     const VkAllocationCallbacks *p_allocator,
     VkDebugUtilsMessengerEXT *p_debug_messenger);
 
-void debug_utils_messenger_destroy(VkInstance instance,
+void debug_utils_messenger_destroy(VkInstance *instance,
                                    VkDebugUtilsMessengerEXT debug_messenger,
                                    const VkAllocationCallbacks *p_allocator);
 
