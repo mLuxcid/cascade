@@ -5,6 +5,7 @@
 #include "vulkan/instance.h"
 #include "vulkan/debug.h"
 #include "vulkan/phys_device.h"
+#include "log.h"
 
 int main(void) {
     Window window;
@@ -23,7 +24,7 @@ int main(void) {
         &instance, &debug_utils_messenger_create_info, NULL,
         &debug_utils_messenger);
     if (res != VK_SUCCESS) {
-        printf("debug_utils_messenger_create() failed with code %d\n", res);
+        LOG(VK, "debug_utils_messenger_create() failed with code %d", res);
         return 1;
     }
 

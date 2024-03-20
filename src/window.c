@@ -5,13 +5,14 @@
 #include <assert.h>
 
 #include "window.h"
+#include "log.h"
 
 int is_glfw_initialized = 0;
 
 void window_create(Window *window, size_t w, size_t h, const char *title) {
     if (!is_glfw_initialized) {
         if (!glfwInit()) {
-            printf("failed to initialize GLFW.");
+            ERR(WIN, "failed to initialize GLFW.");
             exit(1);
         }
     }

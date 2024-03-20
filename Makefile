@@ -3,8 +3,8 @@ override CFLAGS := -O2 -g -pipe
 override CPPFLAGS :=
 override LDFLAGS :=
 override MKDIR_P := /sbin/mkdir -p
-override CC = clang
-override LD = clang
+override CC = cc
+override LD = cc
 
 # C Compiler flags
 override CFLAGS += \
@@ -12,13 +12,14 @@ override CFLAGS += \
 	-Wextra \
 	-Werror \
 	-pedantic \
-	-std=c2x \
+	-std=gnu2x \
 	-fsanitize=undefined,address
 
 # C Preprocessor flags
 override CPPFLAGS += \
 	-Isrc \
 	-MMD \
+	-D__GNU__ \
 	-MP
 
 # Linker flags

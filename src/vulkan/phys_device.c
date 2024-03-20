@@ -4,6 +4,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include "phys_device.h"
+#include "../log.h"
 
 int is_device_sutable(VkPhysicalDevice device);
 
@@ -22,14 +23,14 @@ VkPhysicalDevice pick_physical_device(VkInstance instance) {
         VkPhysicalDeviceProperties dev_properties;
         vkGetPhysicalDeviceProperties(devices[i], &dev_properties);
 
-        printf("found GPU #%zu: %s\n", i, dev_properties.deviceName);
+        LOG(VK, "found device #%zu: %s", i, dev_properties.deviceName);
         if (is_device_sutable(devices[i]) > 0) {
             used_device = i;
             break;
         }
     }
 
-    printf("using GPU #%zu", used_device);
+    LOG(VK, "selected device #%zu", used_device);
 
     return devices[used_device];
 }

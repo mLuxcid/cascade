@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <vulkan/vulkan_core.h>
+#include <stdlib.h>
 #include "debug.h"
+#include "../log.h"
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
@@ -11,7 +12,11 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
     (void)p_user_data;
 
     if (message_severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-        printf("validation layer: %s\n", p_callback_data->pMessage);
+        if (message_severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+            ERR(VK, "validation layer: %s", p_callback_data->pMessage);
+        } else {
+            WARN(VK, "validation layer: %s", p_callback_data->pMessage);
+        }
     }
 
     // we don't care about the return value

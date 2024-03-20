@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "extensions.h"
+#include "../log.h"
 
 extern int enable_validation_layers;
 
@@ -26,7 +27,7 @@ ExtensionList get_instance_extensions(void) {
                                            available_extensions);
 
     int found[list.count];
-    printf("available extensions:\n");
+    LOG(VK, "available extensions:");
     for (size_t i = 0; i < available_extension_count; i++) {
 
         for (size_t j = 0; j < list.count; j++) {
@@ -36,12 +37,12 @@ ExtensionList get_instance_extensions(void) {
             }
         }
 
-        printf("\t%s\n", available_extensions[i].extensionName);
+        LOG(VK, "\t%s", available_extensions[i].extensionName);
     }
 
     for (size_t i = 0; i < list.count; i++) {
         if (!found[i]) {
-            printf("GLFW requires unavailable extension: %s\n", list.names[i]);
+            ERR(VK, "GLFW requires unavailable extension: %s", list.names[i]);
             exit(1);
         }
     }

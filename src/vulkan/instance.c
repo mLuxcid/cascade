@@ -7,6 +7,7 @@
 #include "extensions.h"
 #include "layer.h"
 #include "debug.h"
+#include "../log.h"
 
 int enable_validation_layers = 1;
 
@@ -55,7 +56,7 @@ void instance_create(VkInstance *instance) {
     }
 
     if (vkCreateInstance(&instance_create_info, NULL, instance) != VK_SUCCESS) {
-        printf("instance creation failed!\n");
+        ERR(VK, "instance creation failed!");
         exit(1);
     }
 }
