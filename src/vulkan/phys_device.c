@@ -23,22 +23,21 @@ VkPhysicalDevice pick_physical_device(VkInstance instance) {
         VkPhysicalDeviceProperties dev_properties;
         vkGetPhysicalDeviceProperties(devices[i], &dev_properties);
 
-        LOG(VK, "found device #%zu: %s", i, dev_properties.deviceName);
+        LOG(VK, "found physical device: #%zu: %s", i,
+            dev_properties.deviceName);
         if (is_device_sutable(devices[i]) > 0) {
             used_device = i;
             break;
         }
     }
 
-    LOG(VK, "selected device #%zu", used_device);
+    LOG(VK, "using physical device #%zu", used_device);
 
     return devices[used_device];
 }
 
 int is_device_sutable(VkPhysicalDevice device) {
-
     QueueFamilyIndices indices = find_queue_families(device);
-
     return indices.graphics_family;
 }
 
