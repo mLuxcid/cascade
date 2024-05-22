@@ -2,14 +2,29 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 
 #include "window.h"
 #include "log.h"
 
+struct window_t {
+    // GLFW window
+    GLFWwindow *window;
+
+    // size
+    size_t width;
+    size_t height;
+
+    // title
+    const char *title;
+
+    bool should_close;
+};
+
 int is_glfw_initialized = 0;
 
-void window_create(Window *window, size_t w, size_t h, const char *title) {
+void window_create(struct window_t *window, size_t w, size_t h, const char *title) {
     if (!is_glfw_initialized) {
         if (!glfwInit()) {
             ERR(WIN, "failed to initialize GLFW.");
@@ -23,9 +38,13 @@ void window_create(Window *window, size_t w, size_t h, const char *title) {
     window->width = w;
     window->height = h;
     window->title = title;
-    window->should_close = 0;
+    window->should_close = false;
     window->window = glfwCreateWindow(w, h, title, NULL, NULL);
     assert(window->window);
 }
 
-void window_delete(Window *window) { glfwDestroyWindow(window->window); }
+bool window_should_close(struct window_t *window) {
+    return window->should_close;
+}
+
+void window_delete(struct window_t *window) { glfwDestroyWindow(window->window); }
