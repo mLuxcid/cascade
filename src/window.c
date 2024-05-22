@@ -24,7 +24,7 @@ struct window_t {
 
 int is_glfw_initialized = 0;
 
-void window_create(struct window_t *window, size_t w, size_t h, const char *title) {
+void window_create(struct window_t **window, size_t w, size_t h, const char *title) {
     if (!is_glfw_initialized) {
         if (!glfwInit()) {
             ERR(WIN, "failed to initialize GLFW.");
@@ -35,11 +35,11 @@ void window_create(struct window_t *window, size_t w, size_t h, const char *titl
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    window->width = w;
-    window->height = h;
-    window->title = title;
-    window->should_close = false;
-    window->window = glfwCreateWindow(w, h, title, NULL, NULL);
+    *window->width = w;
+    *window->height = h;
+    *window->title = title;
+    *window->should_close = false;
+    *window->window = glfwCreateWindow(w, h, title, NULL, NULL);
     assert(window->window);
 }
 
@@ -47,8 +47,8 @@ bool window_should_close(struct window_t *window) {
     return window->should_close;
 }
 
-void window_set_should_close(struct window_t *window, bool val) {
-    window->should_close = val;
+void window_set_should_close(struct window_t **window, bool val) {
+    *window->should_close = val;
 }
 
-void window_delete(struct window_t *window) { glfwDestroyWindow(window->window); }
+void window_delete(struct window_t **window) { glfwDestroyWindow(*window->window); }
