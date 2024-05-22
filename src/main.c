@@ -8,7 +8,7 @@
 #include "log.h"
 
 int main(void) {
-    Window window;
+    struct window_t *window = NULL;
     window_create(&window, 800, 600, "Cascade");
 
     VkInstance instance = NULL;
@@ -33,9 +33,9 @@ int main(void) {
         pick_physical_device(instance);
     // TODO: logical device
 
-    while (!window.should_close) {
+    while (!window_should_close(window)) {
         if (glfwGetKey(window.window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            window.should_close = 1;
+            window_set_should_close(window, true);
         }
         glfwPollEvents();
     }
