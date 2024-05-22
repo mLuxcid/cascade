@@ -47,4 +47,8 @@ bool window_should_close(struct window_t *window) {
     return window->should_close;
 }
 
+void window_set_should_close(struct window_t *window, bool val) {
+    window->should_close = val;
+}
+
 void window_delete(struct window_t *window) { glfwDestroyWindow(window->window); }
