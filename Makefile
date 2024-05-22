@@ -12,7 +12,7 @@ override CFLAGS += \
 	-Wextra \
 	-Werror \
 	-pedantic \
-	-std=gnu2x \
+	-std=gnu11 \
 	-fsanitize=undefined,address
 
 # C Preprocessor flags
