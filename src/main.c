@@ -35,7 +35,7 @@ int main(void) {
 
     while (!window_should_close(window)) {
         if (glfwGetKey(window.window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            window_set_should_close(window, true);
+            window_set_should_close(&window, true);
         }
         glfwPollEvents();
     }
