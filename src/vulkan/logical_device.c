@@ -5,9 +5,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <vulkan/vulkan_core.h>
+
+QueueFamilyIndices indices = {0};
 
 void create_logical_device(VkDevice *device, VkPhysicalDevice physical_device) {
-    const QueueFamilyIndices indices = find_queue_families(physical_device);
+    indices = find_queue_families(physical_device);
 
     const float queue_priority = 1.0f;
     const VkDeviceQueueCreateInfo queue_create_info = {
@@ -44,6 +47,12 @@ void create_logical_device(VkDevice *device, VkPhysicalDevice physical_device) {
         ERR("vkCreateDevice() failed");
         exit(1);
     }
+}
+
+VkQueue get_logical_device_graphics_queue(VkDevice device) {
+    VkQueue graphics_queue = NULL;
+    vkGetDeviceQueue(device, indices.graphics_family, 0, &graphics_queue);
+    return graphics_queue;
 }
 
 void destroy_logical_device(VkDevice device) {

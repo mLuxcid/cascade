@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <vulkan/vulkan_core.h>
 
 #include "vulkan/layer.h"
 #include "vulkan/logical_device.h"
@@ -37,6 +38,10 @@ int main(void) {
     VkDevice device = NULL;
     create_logical_device(&device, physical_device);
     assert(device != NULL);
+
+    VkQueue graphics_queue = get_logical_device_graphics_queue(device);
+    (void)graphics_queue;
+
 
     while (!window_should_close(window)) {
         if (window_get_key(window, GLFW_KEY_ESCAPE) == true) {
