@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <vulkan/vulkan.h>
 
@@ -9,7 +10,11 @@
 #include "debug.h"
 #include "../log.h"
 
-int enable_validation_layers = 1;
+bool enable_validation_layers = 1;
+
+bool are_layers_enabled(void) {
+    return enable_validation_layers;
+}
 
 void instance_create(VkInstance *instance) {
     VkApplicationInfo app_info = {
@@ -30,8 +35,11 @@ void instance_create(VkInstance *instance) {
     uint32_t layer_count =
         sizeof(validation_layers) / sizeof(validation_layers[0]);
 
-    assert(check_layer_support(validation_layers, layer_count) &&
-           enable_validation_layers);
+    ValidationLayers *layers = check_layer_support(validation_layers, layer_count);
+    if (!layers && enable_validation_layers) {
+        ERR("check_layer_support() failed!");
+        exit(1);
+    }
 
     VkInstanceCreateInfo instance_create_info = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
@@ -47,16 +55,18 @@ void instance_create(VkInstance *instance) {
         populate_debug_messenger_create_info(
             &debug_utils_messenger_create_info);
 
-        instance_create_info.enabledLayerCount = layer_count;
-        instance_create_info.ppEnabledLayerNames = validation_layers;
+        instance_create_info.enabledLayerCount = layers->layer_count;
+        instance_create_info.ppEnabledLayerNames = layers->enabled_layers;
         instance_create_info.pNext = &debug_utils_messenger_create_info;
     } else {
         instance_create_info.enabledLayerCount = 0;
         instance_create_info.pNext = NULL;
     }
 
+    free(layers == NULL ? layers : layers);
+
     if (vkCreateInstance(&instance_create_info, NULL, instance) != VK_SUCCESS) {
-        ERR(VK, "instance creation failed!");
+        ERR("instance creation failed!");
         exit(1);
     }
 }

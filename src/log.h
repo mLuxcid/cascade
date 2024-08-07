@@ -1,7 +1,24 @@
 #pragma once
 
-#define LOG(prefix, fmt, ...) printf(#prefix " : " fmt "\n", ##__VA_ARGS__)
-#define WARN(prefix, fmt, ...)                                                 \
-    printf("\033[33m" #prefix " : " fmt "\033[0m\n", ##__VA_ARGS__)
-#define ERR(prefix, fmt, ...)                                                  \
-    printf("\033[31m" #prefix " : " fmt "\033[0m\n", ##__VA_ARGS__);
+void log_write(
+    const char *restrict file,
+    int ln,
+    const char *restrict fn,
+    const char *restrict prefix,
+    const char *restrict fmt,
+    ...);
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+
+#define LOG(fmt, ...)                                                          \
+    log_write(__FILE__, __LINE__, __FUNCTION__, "LOG", fmt, ##__VA_ARGS__)
+#define WARN(fmt, ...)                                                         \
+    log_write(__FILE__, __LINE__, __FUNCTION__, "WRN", fmt, ##__VA_ARGS__)
+#define ERR( fmt, ...)                                                         \
+    log_write(__FILE__, __LINE__, __FUNCTION__, "ERR", fmt, ##__VA_ARGS__)
+
+#pragma clang diagnostic pop
+
+#endif

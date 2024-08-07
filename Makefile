@@ -1,10 +1,13 @@
 override BIN := bin/cascade
+
 override CFLAGS := -O2 -g -pipe
 override CPPFLAGS :=
 override LDFLAGS :=
+
 override MKDIR_P := /sbin/mkdir -p
-override CC = cc
-override LD = cc
+
+override CC ?= cc
+override LD := $(CC)
 
 # C Compiler flags
 override CFLAGS += \

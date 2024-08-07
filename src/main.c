@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "vulkan/logical_device.h"
 #include "window.h"
 #include "vulkan/instance.h"
 #include "vulkan/debug.h"
@@ -8,7 +9,7 @@
 #include "log.h"
 
 int main(void) {
-    struct window_t *window = NULL;
+    Window *window = NULL;
     window_create(&window, 800, 600, "Cascade");
 
     VkInstance instance = NULL;
@@ -24,23 +25,25 @@ int main(void) {
         &instance, &debug_utils_messenger_create_info, NULL,
         &debug_utils_messenger);
     if (res != VK_SUCCESS) {
-        LOG(VK, "debug_utils_messenger_create() failed with code %d", res);
+        ERR("debug_utils_messenger_create() failed with code %d", res);
         return 1;
     }
 
-    // TODO: physical device
-    __attribute__((unused)) VkPhysicalDevice physical_device =
+    VkPhysicalDevice physical_device =
         pick_physical_device(instance);
-    // TODO: logical device
+    VkDevice device;
+    create_logical_device(&device, physical_device);
+    assert(device != NULL);
 
     while (!window_should_close(window)) {
-        if (glfwGetKey(window.window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        if (window_get_key(window, GLFW_KEY_ESCAPE) == true) {
             window_set_should_close(&window, true);
         }
-        glfwPollEvents();
+        window_poll();
     }
 
+    destroy_logical_device(device);
     debug_utils_messenger_destroy(&instance, debug_utils_messenger, NULL);
     instance_destroy(instance);
-    glfwTerminate();
+    window_delete(&window);
 }

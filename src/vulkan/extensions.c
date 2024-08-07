@@ -5,8 +5,7 @@
 #include <string.h>
 #include "extensions.h"
 #include "../log.h"
-
-extern int enable_validation_layers;
+#include "instance.h"
 
 ExtensionList get_instance_extensions(void) {
     ExtensionList list = {
@@ -18,7 +17,7 @@ ExtensionList get_instance_extensions(void) {
     vkEnumerateInstanceExtensionProperties(NULL, &available_extension_count,
                                            NULL);
 
-    if (enable_validation_layers) {
+    if (are_layers_enabled()) {
         list.names[list.count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
     }
 
@@ -27,7 +26,7 @@ ExtensionList get_instance_extensions(void) {
                                            available_extensions);
 
     int found[list.count];
-    LOG(VK, "available extensions:");
+    LOG("available extensions:");
     for (size_t i = 0; i < available_extension_count; i++) {
 
         for (size_t j = 0; j < list.count; j++) {
@@ -37,12 +36,12 @@ ExtensionList get_instance_extensions(void) {
             }
         }
 
-        LOG(VK, "\t%s", available_extensions[i].extensionName);
+        LOG("    %s", available_extensions[i].extensionName);
     }
 
     for (size_t i = 0; i < list.count; i++) {
         if (!found[i]) {
-            ERR(VK, "GLFW requires unavailable extension: %s", list.names[i]);
+            ERR("GLFW requires unavailable extension: %s", list.names[i]);
             exit(1);
         }
     }

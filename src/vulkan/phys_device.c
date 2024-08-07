@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <assert.h>
 #include <vulkan/vulkan_core.h>
 
@@ -18,27 +19,33 @@ VkPhysicalDevice pick_physical_device(VkInstance instance) {
 
     vkEnumeratePhysicalDevices(instance, &device_count, devices);
 
-    size_t used_device = 0;
+    int used_device = -1;
     for (size_t i = 0; i < device_count; i++) {
         VkPhysicalDeviceProperties dev_properties;
         vkGetPhysicalDeviceProperties(devices[i], &dev_properties);
 
-        LOG(VK, "found physical device: #%zu: %s", i,
+        LOG("found physical device: #%zu: %s", i,
             dev_properties.deviceName);
-        if (is_device_sutable(devices[i]) > 0) {
+        if (is_device_sutable(devices[i])) {
             used_device = i;
             break;
         }
     }
 
-    LOG(VK, "using physical device #%zu", used_device);
+    if (used_device == -1) {
+        ERR("failed to find suitable device");
+        exit(1);
+    }
+
+    LOG("using physical device #%zu", used_device);
 
     return devices[used_device];
 }
 
 int is_device_sutable(VkPhysicalDevice device) {
     QueueFamilyIndices indices = find_queue_families(device);
-    return indices.graphics_family;
+    // i don't think everyone will ever reach this index
+    return indices.graphics_family != UINT32_MAX;
 }
 
 QueueFamilyIndices find_queue_families(VkPhysicalDevice device) {
@@ -49,9 +56,10 @@ QueueFamilyIndices find_queue_families(VkPhysicalDevice device) {
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count,
                                              queue_families);
 
-    QueueFamilyIndices indices = {.graphics_family = 0};
+    QueueFamilyIndices indices = {.graphics_family = UINT32_MAX};
 
     for (size_t i = 0; i < queue_family_count; i++) {
+        if (indices.graphics_family != UINT32_MAX) break;
         if (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             indices.graphics_family = i;
         }

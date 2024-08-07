@@ -13,9 +13,9 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(
 
     if (message_severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
         if (message_severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-            ERR(VK.ValidationLayer, "%s", p_callback_data->pMessage);
+            ERR("ValidationLayer: %s", p_callback_data->pMessage);
         } else {
-            WARN(VK.ValidationLayer, "%s", p_callback_data->pMessage);
+            WARN("ValidationLayer: %s", p_callback_data->pMessage);
         }
     }
 
