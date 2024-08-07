@@ -10,12 +10,6 @@
 #include "debug.h"
 #include "../log.h"
 
-bool enable_validation_layers = 1;
-
-bool are_layers_enabled(void) {
-    return enable_validation_layers;
-}
-
 void instance_create(VkInstance *instance) {
     VkApplicationInfo app_info = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -36,7 +30,7 @@ void instance_create(VkInstance *instance) {
         sizeof(validation_layers) / sizeof(validation_layers[0]);
 
     ValidationLayers *layers = check_layer_support(validation_layers, layer_count);
-    if (!layers && enable_validation_layers) {
+    if (!layers && ENABLE_VALIDATION_LAYERS) {
         ERR("check_layer_support() failed!");
         exit(1);
     }
@@ -51,7 +45,7 @@ void instance_create(VkInstance *instance) {
 
     VkDebugUtilsMessengerCreateInfoEXT debug_utils_messenger_create_info = {0};
 
-    if (enable_validation_layers) {
+    if (ENABLE_VALIDATION_LAYERS) {
         populate_debug_messenger_create_info(
             &debug_utils_messenger_create_info);
 

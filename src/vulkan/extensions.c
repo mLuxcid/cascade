@@ -1,3 +1,4 @@
+#include "layer.h"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -5,7 +6,6 @@
 #include <string.h>
 #include "extensions.h"
 #include "../log.h"
-#include "instance.h"
 
 ExtensionList get_instance_extensions(void) {
     ExtensionList list = {
@@ -17,7 +17,7 @@ ExtensionList get_instance_extensions(void) {
     vkEnumerateInstanceExtensionProperties(NULL, &available_extension_count,
                                            NULL);
 
-    if (are_layers_enabled()) {
+    if (ENABLE_VALIDATION_LAYERS) {
         list.names[list.count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
     }
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "vulkan/layer.h"
 #include "vulkan/logical_device.h"
 #include "window.h"
 #include "vulkan/instance.h"
@@ -17,21 +18,23 @@ int main(void) {
     assert(instance != NULL);
 
     // setup a debug messenger
-    VkDebugUtilsMessengerEXT debug_utils_messenger;
+    VkDebugUtilsMessengerEXT debug_utils_messenger = NULL;
     VkDebugUtilsMessengerCreateInfoEXT debug_utils_messenger_create_info = {0};
     populate_debug_messenger_create_info(&debug_utils_messenger_create_info);
 
-    VkResult res = debug_utils_messenger_create(
-        &instance, &debug_utils_messenger_create_info, NULL,
-        &debug_utils_messenger);
-    if (res != VK_SUCCESS) {
-        ERR("debug_utils_messenger_create() failed with code %d", res);
-        return 1;
+    if (ENABLE_VALIDATION_LAYERS) {
+        VkResult res = debug_utils_messenger_create(
+            &instance, &debug_utils_messenger_create_info, NULL,
+            &debug_utils_messenger);
+        if (res != VK_SUCCESS) {
+            ERR("debug_utils_messenger_create() failed with code %d", res);
+            return 1;
+        }
     }
 
     VkPhysicalDevice physical_device =
         pick_physical_device(instance);
-    VkDevice device;
+    VkDevice device = NULL;
     create_logical_device(&device, physical_device);
     assert(device != NULL);
 
@@ -43,7 +46,11 @@ int main(void) {
     }
 
     destroy_logical_device(device);
-    debug_utils_messenger_destroy(&instance, debug_utils_messenger, NULL);
+
+    if (ENABLE_VALIDATION_LAYERS) {
+        debug_utils_messenger_destroy(&instance, debug_utils_messenger, NULL);
+    }
+
     instance_destroy(instance);
     window_delete(&window);
 }

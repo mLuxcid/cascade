@@ -4,6 +4,8 @@ override CFLAGS := -O2 -g -pipe
 override CPPFLAGS :=
 override LDFLAGS :=
 
+override ENABLE_VALIDATION_LAYERS ?= yes
+
 override MKDIR_P := /sbin/mkdir -p
 
 override CC ?= cc
@@ -24,6 +26,11 @@ override CPPFLAGS += \
 	-MMD \
 	-D__GNU__ \
 	-MP
+
+ifeq ($(ENABLE_VALIDATION_LAYERS),yes)
+	override CPPFLAGS += \
+		-DENABLE_VALIDATION_LAYERS=1
+endif
 
 # Linker flags
 override LDFLAGS += \

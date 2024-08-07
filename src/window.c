@@ -1,3 +1,5 @@
+#include <errno.h> // IWYU pragma: keep
+#include <string.h>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -37,6 +39,9 @@ void window_create(Window **window, size_t w, size_t h, const char *title) {
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     (*window) = calloc(1, sizeof(Window));
+    if (*window == NULL) {
+        ERR("calloc() failed: %s", strerror(errno));
+    }
 
     (*window)->width = w;
     (*window)->height = h;

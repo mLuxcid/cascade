@@ -1,7 +1,6 @@
 #include "logical_device.h"
 #include "layer.h"
 #include "phys_device.h"
-#include "instance.h"
 #include "../log.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -31,7 +30,7 @@ void create_logical_device(VkDevice *device, VkPhysicalDevice physical_device) {
     };
 
     ValidationLayers *layers = check_layer_support(NULL, 0);
-    if (are_layers_enabled()) {
+    if (ENABLE_VALIDATION_LAYERS) {
         if (layers == NULL) {
             ERR("check_layer_support() failed!");
             exit(1);
