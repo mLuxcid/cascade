@@ -29,7 +29,8 @@ void instance_create(VkInstance *instance) {
     uint32_t layer_count =
         sizeof(validation_layers) / sizeof(validation_layers[0]);
 
-    ValidationLayers *layers = check_layer_support(validation_layers, layer_count);
+    ValidationLayers *layers =
+        check_layer_support(validation_layers, layer_count);
     if (!layers && ENABLE_VALIDATION_LAYERS) {
         ERR("check_layer_support() failed!");
         exit(1);
