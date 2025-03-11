@@ -16,7 +16,7 @@ void log_write(
     log_write(__FILE__, __LINE__, __FUNCTION__, "LOG", fmt, ##__VA_ARGS__)
 #define WARN(fmt, ...)                                                         \
     log_write(__FILE__, __LINE__, __FUNCTION__, "WRN", fmt, ##__VA_ARGS__)
-#define ERR( fmt, ...)                                                         \
+#define ERR(fmt, ...)                                                         \
     log_write(__FILE__, __LINE__, __FUNCTION__, "ERR", fmt, ##__VA_ARGS__)
 
 #pragma clang diagnostic pop

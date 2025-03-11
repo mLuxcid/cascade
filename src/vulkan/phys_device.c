@@ -24,11 +24,9 @@ VkPhysicalDevice pick_physical_device(VkInstance instance) {
         VkPhysicalDeviceProperties dev_properties;
         vkGetPhysicalDeviceProperties(devices[i], &dev_properties);
 
-        LOG("found physical device: #%zu: %s", i,
-            dev_properties.deviceName);
-        if (is_device_sutable(devices[i])) {
+        LOG("found physical device: #%zu: %s", i, dev_properties.deviceName);
+        if (is_device_sutable(devices[i]) && used_device == -1) {
             used_device = i;
-            break;
         }
     }
 
@@ -44,7 +42,7 @@ VkPhysicalDevice pick_physical_device(VkInstance instance) {
 
 int is_device_sutable(VkPhysicalDevice device) {
     QueueFamilyIndices indices = find_queue_families(device);
-    // i don't think everyone will ever reach this index
+    // unreachable index! (unless ur rich or something n got like a custom motherboard to support that many GPUs)
     return indices.graphics_family != UINT32_MAX;
 }
 
@@ -53,8 +51,9 @@ QueueFamilyIndices find_queue_families(VkPhysicalDevice device) {
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, NULL);
 
     VkQueueFamilyProperties queue_families[queue_family_count];
-    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count,
-                                             queue_families);
+    vkGetPhysicalDeviceQueueFamilyProperties(
+        device, &queue_family_count, queue_families
+    );
 
     QueueFamilyIndices indices = {.graphics_family = UINT32_MAX};
 

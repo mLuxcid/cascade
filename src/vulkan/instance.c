@@ -10,7 +10,8 @@
 #include "debug.h"
 #include "../log.h"
 
-void instance_create(VkInstance *instance) {
+VkInstance instance_create(void) {
+    VkInstance instance;
     VkApplicationInfo app_info = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName = "cascade",
@@ -60,10 +61,11 @@ void instance_create(VkInstance *instance) {
 
     free(layers == NULL ? layers : layers);
 
-    if (vkCreateInstance(&instance_create_info, NULL, instance) != VK_SUCCESS) {
+    if (vkCreateInstance(&instance_create_info, NULL, &instance) != VK_SUCCESS) {
         ERR("instance creation failed!");
         exit(1);
     }
+    return instance;
 }
 
 void instance_destroy(VkInstance instance) {

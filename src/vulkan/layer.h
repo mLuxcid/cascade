@@ -8,7 +8,7 @@
 #define ENABLE_VALIDATION_LAYERS 0
 #endif
 
-typedef struct {
+typedef struct ValidationLayers {
     const char **enabled_layers;
     uint32_t layer_count;
 } ValidationLayers;

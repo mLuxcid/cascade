@@ -11,11 +11,9 @@
 #include "log.h"
 
 int main(void) {
-    Window *window = NULL;
-    window_create(&window, 800, 600, "Cascade");
+    Window *window = window_create(800, 600, "Cascade");
 
-    VkInstance instance = NULL;
-    instance_create(&instance);
+    VkInstance instance = instance_create();
     assert(instance != NULL);
 
     // setup a debug messenger

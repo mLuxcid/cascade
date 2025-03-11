@@ -10,7 +10,7 @@
 #include "window.h"
 #include "log.h"
 
-struct window_t {
+struct Window {
     // GLFW window
     GLFWwindow *window;
 
@@ -27,7 +27,7 @@ struct window_t {
 
 int is_glfw_initialized = 0;
 
-void window_create(Window **window, size_t w, size_t h, const char *title) {
+Window *window_create(size_t w, size_t h, const char *title) {
     if (!is_glfw_initialized) {
         if (!glfwInit()) {
             ERR("failed to initialize GLFW.");
@@ -38,17 +38,19 @@ void window_create(Window **window, size_t w, size_t h, const char *title) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    (*window) = calloc(1, sizeof(Window));
-    if (*window == NULL) {
+
+    Window *window = calloc(1, sizeof(Window));
+    if (window == NULL) {
         ERR("calloc() failed: %s", strerror(errno));
     }
 
-    (*window)->width = w;
-    (*window)->height = h;
-    (*window)->title = title;
-    (*window)->should_close = false;
-    (*window)->window = glfwCreateWindow(w, h, title, NULL, NULL);
-    assert((*window)->window);
+    window->width = w;
+    window->height = h;
+    window->title = title;
+    window->should_close = false;
+    window->window = glfwCreateWindow(w, h, title, NULL, NULL);
+    assert(window->window);
+    return window;
 }
 
 bool window_should_close(Window *window) {

@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // hold the extension count & names
-typedef struct {
+typedef struct ExtensionList {
     uint32_t count;
     const char **names;
 } ExtensionList;

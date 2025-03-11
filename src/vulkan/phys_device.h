@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <vulkan/vulkan.h>
 
-typedef struct _QueueFamilyIndices {
+typedef struct QueueFamilyIndices {
     uint32_t graphics_family;
 } QueueFamilyIndices;
 
