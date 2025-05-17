@@ -12,9 +12,22 @@ struct Window {
 
 Window *window_create(const char *title, int width, int height, uint32_t flags)
 {
+    /* TODO: move this somewhere else */
+    if (!glfwInit()) {
+        fprintf(stderr, "failed to initialize platform core.\n");
+        abort();
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
     Window *win = calloc(1, sizeof(Window));
     if (win == NULL) {
-        fprintf(stderr, "failed to allocate memory for window");
+        fprintf(stderr, "failed to allocate memory for window\n");
         abort();
     }
 
@@ -24,7 +37,8 @@ Window *window_create(const char *title, int width, int height, uint32_t flags)
 
     win->window = glfwCreateWindow(width, height, title, NULL, NULL);
     if (win->window == NULL) {
-        fprintf(stderr, "failed to create underlying window object");
+        fprintf(stderr, "failed to create underlying window object\n");
+        abort();
     }
 
     if (flags & WINDOW_FLAG_NO_VSYNC) {
