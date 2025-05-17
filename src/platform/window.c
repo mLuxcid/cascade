@@ -23,12 +23,13 @@ Window *window_create(const char *title, int width, int height, uint32_t flags)
     win->title = title;
 
     win->window = glfwCreateWindow(width, height, title, NULL, NULL);
-
-    if (flags & WINDOW_FLAG_VSYNC) {
-        glfwSwapInterval(0);
+    if (win->window == NULL) {
+        fprintf(stderr, "failed to create underlying window object");
     }
 
-    glfwSetWindowUserPointer(win->window, win);
+    if (flags & WINDOW_FLAG_NO_VSYNC) {
+        glfwSwapInterval(0);
+    }
 
     return win;
 }

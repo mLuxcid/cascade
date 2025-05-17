@@ -5,7 +5,7 @@
 
 typedef enum WindowFlags {
     WINDOW_FLAG_NONE = 0,
-    WINDOW_FLAG_VSYNC = 1 << 0,
+    WINDOW_FLAG_NO_VSYNC = 1 << 0,
 } WindowFlags;
 
 struct Window;
