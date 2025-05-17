@@ -2,12 +2,16 @@ project('cascade', 'c',
   version : '0.1',
   default_options : ['warning_level=3', 'c_std=c17'])
 
-sources = []
+sources = [
+  'src/platform/window.c'
+]
 incdir = include_directories('include')
 
 dependencies = []
-dependencies += dependency('sdl2') # TODO: check if on windows
-dependencies += dependency('cglm')
+dependencies += dependency('cglm',  required : true)
+dependencies += dependency('glfw3',
+  default_options: ['default_library=static'],
+  required : true)
 
 glad_proj = subproject('glad')
 glad = glad_proj.get_variable('glad_dep')
