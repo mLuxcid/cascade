@@ -3,8 +3,10 @@ project('cascade', 'c',
   default_options : ['warning_level=3', 'c_std=c17'])
 
 sources = [
-  'src/platform/window.c'
+  'src/platform/window.c',
+  'src/platform/init.c'
 ]
+
 incdir = include_directories('include')
 
 dependencies = []
@@ -28,3 +30,4 @@ cascade_dep = declare_dependency(
   include_directories : incdir,
   link_with : cascade)
 
+subdir('example_app')

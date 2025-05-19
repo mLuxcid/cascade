@@ -1,19 +1,25 @@
-#include <platform/window.h>
+#include <cascade/platform/window.h>
+#include <cascade/platform/init.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Window {
+struct cascade_window {
     GLFWwindow *window;
 
     int width, height;
     const char *title;
+
+    cascade_window_key_callback key_callback;
+    cascade_window_resize_callback resize_callback; 
 };
 
-Window *window_create(const char *title, int width, int height, uint32_t flags)
+struct cascade_window *cascade_window_create(const char *title,
+        int width, int height,
+        enum cascade_window_flags flags)
 {
-    /* TODO: move this somewhere else */
-    if (!glfwInit()) {
+    if (!cascade_platform_init()) {
         fprintf(stderr, "failed to initialize platform core.\n");
         abort();
     }
@@ -25,7 +31,7 @@ Window *window_create(const char *title, int width, int height, uint32_t flags)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    Window *win = calloc(1, sizeof(Window));
+    struct cascade_window *win = calloc(1, sizeof(struct cascade_window));
     if (win == NULL) {
         fprintf(stderr, "failed to allocate memory for window\n");
         abort();
@@ -41,61 +47,94 @@ Window *window_create(const char *title, int width, int height, uint32_t flags)
         abort();
     }
 
-    if (flags & WINDOW_FLAG_NO_VSYNC) {
+    if (!(flags & CASCADE_WINDOW_FLAG_VSYNC)) {
         glfwSwapInterval(0);
+    }
+
+    glfwSetWindowUserPointer(win->window, win);
+
+    /* TODO: check if we are using vulkan */
+    glfwMakeContextCurrent(win->window);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        fprintf(stderr,
+                "failed to provide required data to the graphics API\n");
+        abort();
     }
 
     return win;
 }
 
-void window_destroy(Window *window) {
+void cascade_window_destroy(struct cascade_window *window) {
     if (window == NULL) return;
 
     glfwDestroyWindow(window->window);
     free(window);
 }
 
-void window_frame(Window *window) {
+void cascade_window_frame(struct cascade_window *window) {
     glfwPollEvents();
     glfwSwapBuffers(window->window);
 }
 
-int window_get_width(const Window *window) {
+int cascade_window_get_width(const struct cascade_window *window) {
     return window->width;
 }
 
-int window_get_height(const Window *window) {
+int cascade_window_get_height(const struct cascade_window *window) {
     return window->height;
 }
 
-bool window_should_close(const Window *window) {
+bool cascade_window_should_close(const struct cascade_window *window) {
     return glfwWindowShouldClose(window->window);
 }
 
-void window_set_should_close(Window *window, bool state) {
-    glfwSetWindowShouldClose(window->window, state);
+void cascade_window_set_should_close(struct cascade_window **window, bool state)
+{
+    glfwSetWindowShouldClose((*window)->window, state);
 }
 
-const char *window_get_title(const Window *window) {
+const char *cascade_window_get_title(const struct cascade_window *window) {
     return window->title;
 }
 
-void window_set_title(Window *window, const char *title) {
-    window->title = title;
+void cascade_window_set_title(struct cascade_window **window, const char *title)
+{
+    (*window)->title = title;
 }
 
-int window_get_key_state(const Window *window, int key) {
+int cascade_window_get_key_state(const struct cascade_window *window, int key)
+{
     return glfwGetKey(window->window, key);
 }
 
-/* TODO: implement this */
-void window_set_resize_callback(Window *window, WindowResizeCallback callback) {
-    (void)window;
-    (void)callback;
+static void _window_resize_callback(GLFWwindow *window, int w, int h) {
+    struct cascade_window *self = glfwGetWindowUserPointer(window);
+    self->width = w;
+    self->height = h;
+
+    if (self->resize_callback) self->resize_callback(self, w, h);
 }
 
 /* TODO: implement this */
-void window_set_key_callback(Window *window, WindowKeyCallback callback) {
-    (void)window;
-    (void)callback;
+void cascade_window_set_resize_callback(struct cascade_window **window,
+        cascade_window_resize_callback callback)
+{
+    (*window)->resize_callback = callback;
+    glfwSetFramebufferSizeCallback((*window)->window, _window_resize_callback);
+}
+
+static void _window_key_callback(GLFWwindow *window,
+        int key, __attribute__((unused)) int scancode,
+        int action, int mods)
+{
+    struct cascade_window *self = glfwGetWindowUserPointer(window);
+    if (self->key_callback) self->key_callback(self, key, action, mods);
+}
+
+/* TODO: implement this */
+void cascade_window_set_key_callback(struct cascade_window **window,
+        cascade_window_key_callback callback)
+{
+    (*window)->key_callback = callback;
+    glfwSetKeyCallback((*window)->window, _window_key_callback);
 }
